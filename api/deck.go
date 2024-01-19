@@ -30,14 +30,20 @@ func (handler *DeckHandler) CreateDeck(c *fiber.Ctx) error {
 
 	shuffle := shuffleQuery == "true"
 
-	var listOfCards []int32
+	var cardIds []int32
 	if cardsQuery == "" {
-		listOfCards = utils.RetrieveCards(constants.Numbers, constants.Suits)
+		cardIds = utils.RetrieveCards(constants.Numbers, constants.Suits)
+	} else {
+		var err error
+		cardIds, err = utils.RetrieveSelectedCards(cardsQuery)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err.Error())
+		}
 	}
 
 	deck := new(types.Deck)
 	deck.ID = uuid.New()
-	deck.Cards = listOfCards
+	deck.Cards = cardIds
 
 	if shuffle {
 		deck.Shuffle()
