@@ -1,6 +1,7 @@
 package database
 
 import (
+	"github.com/mohitk09/cards_game/types"
 	"gorm.io/gorm"
 )
 
@@ -13,4 +14,13 @@ func NewDeckRepository(db *gorm.DB) *DeckRepository {
 	return &DeckRepository{
 		db: db,
 	}
+}
+
+func (repository *DeckRepository) Create(deck types.Deck) (types.Deck, error) {
+	err := repository.db.Create(&deck).Error
+	if err != nil {
+		return deck, err
+	}
+
+	return deck, nil
 }

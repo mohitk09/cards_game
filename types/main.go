@@ -4,6 +4,7 @@ import (
 	"math/rand"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"gorm.io/gorm"
 )
 
@@ -11,7 +12,7 @@ type Deck struct {
 	gorm.Model
 	ID         uuid.UUID
 	IsShuffled bool
-	Cards      []int `gorm:"type:integer[]"`
+	Cards      pq.Int32Array `gorm:"type:integer[]"`
 }
 
 func (d *Deck) LeftOverCards() int {
