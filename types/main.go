@@ -3,19 +3,29 @@ package types
 import (
 	"math/rand"
 
-	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"gorm.io/gorm"
 )
 
+type CreateDeckResponse struct {
+	DeckId     string `json:"deck_id"` // returns string representation of UUID
+	IsShuffled bool   `json:"shuffled"`
+	Remaining  int32  `json:"remaining"`
+}
+
 type Deck struct {
 	gorm.Model
-	ID         uuid.UUID
+	ID         string // Convert UUID to string and store
 	IsShuffled bool
-	Cards      []int `gorm:"type:integer[]"`
+	Cards      pq.Int32Array `gorm:"type:integer[]"`
 }
 
 func (d *Deck) LeftOverCards() int {
 	return len(d.Cards)
+}
+
+func (d *Deck) CreateDeckResponse() CreateDeckResponse {
+	return CreateDeckResponse{d.ID, d.IsShuffled, int32(d.LeftOverCards())}
 }
 
 func (d *Deck) Shuffle() {

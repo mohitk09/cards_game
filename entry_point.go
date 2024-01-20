@@ -37,7 +37,10 @@ func SetupRoutes(db *gorm.DB) {
 		return c.SendString("Server running")
 	})
 
+	// Setup the DB layer
 	deckRepository := database.NewDeckRepository(db)
+
+	// Setup the endpoint layer
 	deckHandler := api.NewDeckHandler(deckRepository)
 
 	app.Post("/deck", deckHandler.CreateDeck)
