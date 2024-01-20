@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"github.com/mohitk09/cards_game/constants"
 	"github.com/mohitk09/cards_game/database"
 	"github.com/mohitk09/cards_game/types"
@@ -100,14 +101,21 @@ func (handler *DeckHandler) Draw(c *fiber.Ctx) error {
 		servePartial = true
 	}
 
-	deck.Cards = deck.Cards[count:]
+	var cards pq.Int32Array
+	// Iterate from the back of the slice as drawing a card simulates a stack operation
+	for count > 0 && len(deck.Cards) >= 0 {
+		cards = append(cards, deck.Cards[len(deck.Cards)-1])
+		deck.Cards = deck.Cards[:len(deck.Cards)-1]
+		count--
+	}
+
 	handler.repository.Save(deck) // saves to the database
 
 	// Sends 206 as the request can't be fully filled
 	if servePartial {
-		return c.Status(http.StatusPartialContent).JSON(deck.DrawCardResponse())
+		return c.Status(http.StatusPartialContent).JSON(deck.DrawCardResponse(cards))
 
 	}
 
-	return c.Status(http.StatusOK).JSON(deck.DrawCardResponse())
+	return c.Status(http.StatusOK).JSON(deck.DrawCardResponse(cards))
 }

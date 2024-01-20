@@ -40,8 +40,8 @@ type DrawCardResponse struct {
 	Cards []CardResponse `json:"cards"`
 }
 
-func (d *Deck) DrawCardResponse() DrawCardResponse {
-	return DrawCardResponse{Cards: IdsToCardJsons(d.Cards)}
+func (d *Deck) DrawCardResponse(cards pq.Int32Array) DrawCardResponse {
+	return DrawCardResponse{Cards: convertIDsToCardJson(cards)}
 }
 
 type OpenDeckResponse struct {
@@ -50,17 +50,17 @@ type OpenDeckResponse struct {
 }
 
 func (d *Deck) OpenDeckResponse() OpenDeckResponse {
-	return OpenDeckResponse{d.CreateDeckResponse(), d.DrawCardResponse()}
+	return OpenDeckResponse{d.CreateDeckResponse(), d.DrawCardResponse(d.Cards)}
 }
 
-func IdsToCardJsons(ids []int32) (cardResponse []CardResponse) {
+func convertIDsToCardJson(ids []int32) (cardResponse []CardResponse) {
 	for _, id := range ids {
-		cardResponse = append(cardResponse, ConvertCodeToID(id))
+		cardResponse = append(cardResponse, ConvertIDToCode(id))
 	}
 	return
 }
 
-func ConvertCodeToID(id int32) (cardResponse CardResponse) {
+func ConvertIDToCode(id int32) (cardResponse CardResponse) {
 	// Get the value
 	value := id % (constants.Numbers)
 	switch value {
