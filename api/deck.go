@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -37,29 +36,28 @@ func (handler *DeckHandler) CreateDeck(c *fiber.Ctx) error {
 		var err error
 		cardIds, err = utils.RetrieveSelectedCards(cardsQuery)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, err.Error())
+			return c.Status(http.StatusBadRequest).JSON(err.Error())
 		}
 	}
 
 	deck := new(types.Deck)
-	deck.ID = uuid.New()
+	deck.ID = uuid.New().String() // convert to string and store for the ease
 	deck.Cards = cardIds
 
 	if shuffle {
 		deck.Shuffle()
 	}
 
-	ok, err := handler.repository.Create(*deck)
+	_, err := handler.repository.Create(*deck)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"status":  http.StatusInternalServerError,
-			"message": "Failed creating item",
+			"message": "failed creating the deck",
 			"error":   err,
 		})
 	}
 
-	fmt.Println("I want it to stop here", ok)
-	return c.JSON(ok)
+	return c.Status(http.StatusCreated).JSON(deck.CreateDeckResponse())
 }
 
 func (handler *DeckHandler) OpenDeck(c *fiber.Ctx) error {

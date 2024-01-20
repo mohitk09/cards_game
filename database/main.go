@@ -1,6 +1,8 @@
 package database
 
 import (
+	"errors"
+
 	"github.com/mohitk09/cards_game/types"
 	"gorm.io/gorm"
 )
@@ -23,4 +25,14 @@ func (repository *DeckRepository) Create(deck types.Deck) (types.Deck, error) {
 	}
 
 	return deck, nil
+}
+
+func (repository *DeckRepository) Find(ID string) (types.Deck, error) {
+	var deck types.Deck
+	deck.ID = ID
+	err := repository.db.First(&deck).Error
+	if err != nil {
+		err = errors.New("deck not found")
+	}
+	return deck, err
 }

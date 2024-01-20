@@ -3,6 +3,8 @@ package utils
 import (
 	"errors"
 	"strings"
+
+	"github.com/mohitk09/cards_game/constants"
 )
 
 func RetrieveCards(cards int32, suits int32) (a []int32) {
@@ -12,16 +14,16 @@ func RetrieveCards(cards int32, suits int32) (a []int32) {
 	return
 }
 
-func CodeToId(code string) (id int32, err error) {
+func ConvertCodeToID(code string) (id int32, err error) {
 	var suit int32
 	var value int32
-	valueCharacter := code[0]
-	suitCharacter := code[1]
+	valueChar := code[0]
+	suitChar := code[1]
 
 	/* The following order suit order is maintained to calculate the ID
 	Spades, Diamonds, Clubs and Hearts
 	*/
-	switch suitCharacter {
+	switch suitChar {
 	case 'S':
 		suit = 0
 	case 'D':
@@ -34,7 +36,7 @@ func CodeToId(code string) (id int32, err error) {
 		return -1, errors.New("invalid suit")
 	}
 
-	switch valueCharacter {
+	switch valueChar {
 	case 'A':
 		value = 0
 	case 'J':
@@ -43,15 +45,8 @@ func CodeToId(code string) (id int32, err error) {
 		value = 11
 	case 'K':
 		value = 12
-	case '2':
-	case '3':
-	case '4':
-	case '5':
-	case '6':
-	case '7':
-	case '8':
-	case '9':
-		value = int32(valueCharacter-'0') - 1
+	case '2', '3', '4', '5', '6', '7', '8', '9':
+		value = int32(valueChar-'0') - 1
 	case '1': // This is a case when the value is 10, as we are only computing against first digit
 		value = 9
 	default:
@@ -65,17 +60,17 @@ func CodeToId(code string) (id int32, err error) {
 	Clubs:-    [26, 38]
 	Hearts:-   [39, 51]
 	*/
-	return suit*value + value, nil
+	return suit*constants.Numbers + value, nil
 }
 
 func RetrieveSelectedCards(codeQuery string) (ids []int32, err error) {
-	codes := strings.Split(codeQuery, ",")
-	for _, code := range codes {
-		id, err := CodeToId(code)
+	lisfOfCodes := strings.Split(codeQuery, ",")
+	for _, code := range lisfOfCodes {
+		codeID, err := ConvertCodeToID(code)
 		if err != nil {
 			return nil, err
 		}
-		ids = append(ids, id)
+		ids = append(ids, codeID)
 	}
 	return
 }
