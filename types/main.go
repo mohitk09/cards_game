@@ -36,13 +36,21 @@ type CardResponse struct {
 	Code  string `json:"code"`
 }
 
-type OpenDeckResponse struct {
-	CreateDeckResponse
+type DrawCardResponse struct {
 	Cards []CardResponse `json:"cards"`
 }
 
+func (d *Deck) DrawCardResponse() DrawCardResponse {
+	return DrawCardResponse{Cards: IdsToCardJsons(d.Cards)}
+}
+
+type OpenDeckResponse struct {
+	CreateDeckResponse
+	DrawCardResponse
+}
+
 func (d *Deck) OpenDeckResponse() OpenDeckResponse {
-	return OpenDeckResponse{d.CreateDeckResponse(), IdsToCardJsons(d.Cards)}
+	return OpenDeckResponse{d.CreateDeckResponse(), d.DrawCardResponse()}
 }
 
 func IdsToCardJsons(ids []int32) (cardResponse []CardResponse) {

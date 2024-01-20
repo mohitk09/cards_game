@@ -36,3 +36,11 @@ func (repository *DeckRepository) Find(ID string) (types.Deck, error) {
 	}
 	return deck, err
 }
+
+func (repository *DeckRepository) Save(deck types.Deck) (types.Deck, error) {
+	err := repository.db.Save(deck).Error
+	if err != nil {
+		err = errors.New("deck not saved successfully")
+	}
+	return deck, err
+}

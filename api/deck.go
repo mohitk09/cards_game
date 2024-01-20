@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -71,5 +72,42 @@ func (handler *DeckHandler) OpenDeck(c *fiber.Ctx) error {
 }
 
 func (handler *DeckHandler) Draw(c *fiber.Ctx) error {
-	return c.JSON("hell yeah")
+	count, err := strconv.Atoi(c.Query("count", "1"))
+
+	if err != nil || count < 1 {
+		return c.JSON(http.StatusBadRequest, "count param invalid, please pass a value greater than or equal to 1")
+	}
+
+	deck, err := handler.repository.Find(c.Params("id"))
+	if err != nil {
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	remainingCards := deck.LeftOverCards()
+
+	// Send 409 in case the user tries to draw from an empty deck
+	if remainingCards == 0 {
+		return c.Status(http.StatusConflict).JSON("empty deck, please draw from a different deck")
+	}
+
+	servePartial := false
+
+	if count > remainingCards {
+		count = remainingCards
+		remainingCards = 0
+		servePartial = true
+	}
+
+	deck.Cards = deck.Cards[count:]
+	handler.repository.Save(deck) // saves to the database
+
+	// Sends 206 as the request can't be fully filled
+	if servePartial {
+		return c.Status(http.StatusPartialContent).JSON(deck.DrawCardResponse())
+
+	}
+
+	return c.Status(http.StatusOK).JSON(deck.DrawCardResponse())
 }
