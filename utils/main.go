@@ -50,7 +50,7 @@ func ConvertCodeToID(code string) (id int32, err error) {
 	case '1': // This is a case when the value is 10, as we are only computing against first digit
 		value = 9
 	default:
-		return -1, errors.New("invalid value character")
+		return -1, errors.New("invalid value")
 
 	}
 

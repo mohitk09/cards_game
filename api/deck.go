@@ -109,9 +109,10 @@ func (handler *DeckHandler) Draw(c *fiber.Ctx) error {
 		count--
 	}
 
-	handler.repository.Save(deck) // saves to the database
+	// Update the database
+	handler.repository.Save(deck)
 
-	// Sends 206 as the request can't be fully filled
+	// Sends 206 as the request can't be fully served
 	if servePartial {
 		return c.Status(http.StatusPartialContent).JSON(deck.DrawCardResponse(cards))
 
