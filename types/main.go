@@ -2,8 +2,10 @@ package types
 
 import (
 	"math/rand"
+	"strconv"
 
 	"github.com/lib/pq"
+	"github.com/mohitk09/cards_game/constants"
 	"gorm.io/gorm"
 )
 
@@ -26,6 +28,63 @@ func (d *Deck) LeftOverCards() int {
 
 func (d *Deck) CreateDeckResponse() CreateDeckResponse {
 	return CreateDeckResponse{d.ID, d.IsShuffled, int32(d.LeftOverCards())}
+}
+
+type CardResponse struct {
+	Value string `json:"value"`
+	Suit  string `json:"suit"`
+	Code  string `json:"code"`
+}
+
+type OpenDeckResponse struct {
+	CreateDeckResponse
+	Cards []CardResponse `json:"cards"`
+}
+
+func (d *Deck) OpenDeckResponse() OpenDeckResponse {
+	return OpenDeckResponse{d.CreateDeckResponse(), IdsToCardJsons(d.Cards)}
+}
+
+func IdsToCardJsons(ids []int32) (cardResponse []CardResponse) {
+	for _, id := range ids {
+		cardResponse = append(cardResponse, ConvertCodeToID(id))
+	}
+	return
+}
+
+func ConvertCodeToID(id int32) (cardResponse CardResponse) {
+	// Get the value
+	value := id % (constants.Numbers)
+	switch value {
+	case 0:
+		cardResponse.Value = "ACE"
+	case 10:
+		cardResponse.Value = "JACK"
+	case 11:
+		cardResponse.Value = "QUEEN"
+	case 12:
+		cardResponse.Value = "KING"
+	default:
+		cardResponse.Value = strconv.Itoa(int(value) + 1)
+	}
+	cardResponse.Code = cardResponse.Value[:1]
+
+	/* The following order suit order is maintained to compute the Suit
+	Spades, Diamonds, Clubs and Hearts
+	*/
+	switch id / (constants.Numbers) {
+	case 0:
+		cardResponse.Suit = "SPADES"
+	case 1:
+		cardResponse.Suit = "DIAMONDS"
+	case 2:
+		cardResponse.Suit = "CLUBS"
+	case 3:
+		cardResponse.Suit = "HEARTS"
+	}
+	cardResponse.Code += cardResponse.Suit[:1]
+
+	return
 }
 
 func (d *Deck) Shuffle() {

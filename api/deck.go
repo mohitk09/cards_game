@@ -61,7 +61,13 @@ func (handler *DeckHandler) CreateDeck(c *fiber.Ctx) error {
 }
 
 func (handler *DeckHandler) OpenDeck(c *fiber.Ctx) error {
-	return c.JSON("Something is right")
+	deck, err := handler.repository.Find(c.Params("id"))
+	if err != nil {
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(http.StatusOK).JSON(deck.OpenDeckResponse())
 }
 
 func (handler *DeckHandler) Draw(c *fiber.Ctx) error {
