@@ -4,7 +4,7 @@ This project create Cards game APIs which could be used in Poker and Blackjack o
 
 ## APIs
 
-There are three APIs that have written, which are scalable and could be used in any game.
+There are three APIs that have been written, which are scalable and could be used in any game.
 
 ```
 GET  /                    # Health check
@@ -25,14 +25,20 @@ GET  /deck/:id/draw       # Draw cards from the deck (optional params: count) --
 
 The Project is divided into several packages, **important ones are**:-
 
-1. **API** :- All three APIs reside in this folder
-2. **Database** :- Has basic CRUD operations, uses Sqllite under the hood
+1. **Database** :- Has basic CRUD operations, uses Sqllite under the hood
+2. **API** :- All three APIs reside in this folder, deck API handler has an instance of the DB
 3. **Utils**:- Functions which are used across different files
 4. **Types**:- All the types/structs and functions which are dependent on those types
+5. There are also some test cases which have been added.
 
 ## Run it locally
 
 - Clone the repo, install the go dependencies. You could either do `go mod download` or `go get ./...`.
-- Run `go run entry_point.go` which setup starts the server by configuring DB and the routes.
+- Execute `go run entry_point.go` which starts the server by configuring DB and the routes.
 - Check if http://localhost:8080 shows the message `Server running`. If yes the project setup is done.
 - You can start by creating some decks and copying the UUIDs to later open the deck or draw cards.
+
+## Future scope
+
+1. More intensive test cases.
+2. Creating a docker file so that it becomes easier to test and deploy.
