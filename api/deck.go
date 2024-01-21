@@ -74,8 +74,10 @@ func (handler *DeckHandler) OpenDeck(c *fiber.Ctx) error {
 func (handler *DeckHandler) Draw(c *fiber.Ctx) error {
 	count, err := strconv.Atoi(c.Query("count", "1"))
 
-	if err != nil || count < 1 {
-		return c.JSON(http.StatusBadRequest, "count param invalid, please pass a value greater than or equal to 1")
+	if count < 1 || err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "count param invalid, please pass a value greater than or equal to 1",
+		})
 	}
 
 	deck, err := handler.repository.Find(c.Params("id"))

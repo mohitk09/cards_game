@@ -21,10 +21,11 @@ func main() {
 		panic("failed to connect database")
 	}
 
-	SetupRoutes(db)
+	app := SetupRoutes(db)
+	log.Fatal(app.Listen(":8080"))
 }
 
-func SetupRoutes(db *gorm.DB) {
+func SetupRoutes(db *gorm.DB) *fiber.App {
 	// Migrate the schema
 	db.AutoMigrate(&types.Deck{})
 
@@ -47,5 +48,6 @@ func SetupRoutes(db *gorm.DB) {
 	app.Get("/deck/:id", deckHandler.OpenDeck)
 	app.Get("/deck/:id/draw", deckHandler.Draw)
 
-	log.Fatal(app.Listen(":8080"))
+	return app
+
 }
