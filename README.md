@@ -1,6 +1,7 @@
 # Cards Game
 
-♠️♥️ This project create Cards game APIs which could be used in Poker and Blackjack or any other card game ♣️♦️
+♠️♥️ ♣️♦️
+This project create Cards game APIs which could be used in Poker and Blackjack or any other card game
 
 ## APIs
 
