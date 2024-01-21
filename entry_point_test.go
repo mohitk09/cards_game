@@ -13,7 +13,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// Test create deck, a map to reduce redundancy
+// Test create deck, a map to reduce repeating several lines of code
 func TestCreateDeck(t *testing.T) {
 	tests := []struct {
 		route         string
@@ -36,7 +36,7 @@ func TestCreateDeck(t *testing.T) {
 	app := SetupRoutes(db)
 	for _, test := range tests {
 		req := httptest.NewRequest("POST", test.route, nil)
-		res, err := app.Test(req, 100000)
+		res, err := app.Test(req)
 
 		assert.Nil(t, err)
 		assert.Equal(t, test.expectedCode, res.StatusCode)
@@ -75,5 +75,46 @@ func TestOpenDeckRecordNotFound(t *testing.T) {
 	req := httptest.NewRequest("GET", "/deck/something_random", nil)
 	res, _ := app.Test(req)
 	assert.Equal(t, http.StatusNotFound, res.StatusCode)
+}
 
+func TestOpenDeckRecord(t *testing.T) {
+	db, _ := gorm.Open(sqlite.Open("cards_game_test.db"), &gorm.Config{})
+	app := SetupRoutes(db)
+
+	req := httptest.NewRequest("POST", "/deck", nil)
+	res, _ := app.Test(req)
+	assert.Equal(t, http.StatusCreated, res.StatusCode)
+	var createResponse types.CreateDeckResponse
+	body, err := ioutil.ReadAll(res.Body)
+	assert.Nil(t, err)
+	json.Unmarshal(body, &createResponse)
+
+	req, _ = http.NewRequest("GET", "/deck/"+createResponse.DeckId, nil)
+	openDeckRes, _ := app.Test(req)
+	openDeckResBody, openDeckBodyErr := ioutil.ReadAll(openDeckRes.Body)
+	assert.Nil(t, openDeckBodyErr)
+	var openDeckResponse types.OpenDeckResponse
+	json.Unmarshal(openDeckResBody, &openDeckResponse)
+	assert.Equal(t, http.StatusOK, openDeckRes.StatusCode)
+}
+
+func TestDrawDeck(t *testing.T) {
+	db, _ := gorm.Open(sqlite.Open("cards_game_test.db"), &gorm.Config{})
+	app := SetupRoutes(db)
+
+	req := httptest.NewRequest("POST", "/deck", nil)
+	res, _ := app.Test(req)
+	assert.Equal(t, http.StatusCreated, res.StatusCode)
+	var createResponse types.CreateDeckResponse
+	body, err := ioutil.ReadAll(res.Body)
+	assert.Nil(t, err)
+	json.Unmarshal(body, &createResponse)
+
+	req, _ = http.NewRequest("GET", "/deck/"+createResponse.DeckId+"/draw", nil)
+	drawDeckRes, _ := app.Test(req)
+	openDeckResBody, drawDeckBodyErr := ioutil.ReadAll(drawDeckRes.Body)
+	assert.Nil(t, drawDeckBodyErr)
+	var drawDeckResponse types.DrawCardResponse
+	json.Unmarshal(openDeckResBody, &drawDeckResponse)
+	assert.Equal(t, http.StatusOK, drawDeckRes.StatusCode)
 }
