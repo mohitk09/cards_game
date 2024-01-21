@@ -32,7 +32,7 @@ The Project is divided into several packages, **important ones are**:-
 2. **API** :- All three APIs reside in this folder
 3. **Utils**:- Functions which are used across different files
 4. **Types**:- All the types/structs and functions which are dependent on those types
-5. There are also some test cases which have been added
+5. There are also some test cases which have been added, can be run by `go test` command
 
 ## Run it locally
 
@@ -43,5 +43,5 @@ The Project is divided into several packages, **important ones are**:-
 
 ## Future scope
 
-1. More intensive test cases.
+1. More extensive test cases, currently just covering basic test casess.
 2. Creating a docker file so that it becomes easier to test and deploy.
