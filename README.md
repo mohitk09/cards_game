@@ -8,11 +8,13 @@ There are three APIs that have been written, which are scalable and could be use
 
 ```
 GET  /                    # Health check
-POST /deck                # This creates a new deck (optional params: cards, shuffle) -- cards can also
-                          be passed as query param, the API would then just create a deck with those cards
+POST /deck                # This creates a new deck (optional params: cards, shuffle) -- cards
+                            can also be passed as query param, the API would then just
+                            create a deck with those cards
 GET  /deck/:id            # Retrieves a deck by id, all the cards should be returned
-GET  /deck/:id/draw       # Draw cards from the deck (optional params: count) -- The count is the number
-                          of cards that should be drawn, default value is 1, simulates a stack operation
+GET  /deck/:id/draw       # Draw cards from the deck (optional params: count) -- The count is
+                            the number of cards that should be drawn, default value is 1.
+                            It simulates a stack operation
 ```
 
 ## Dependencies
@@ -26,10 +28,10 @@ GET  /deck/:id/draw       # Draw cards from the deck (optional params: count) --
 The Project is divided into several packages, **important ones are**:-
 
 1. **Database** :- Has basic CRUD operations, uses Sqllite under the hood
-2. **API** :- All three APIs reside in this folder, deck API handler has an instance of the DB
+2. **API** :- All three APIs reside in this folder
 3. **Utils**:- Functions which are used across different files
 4. **Types**:- All the types/structs and functions which are dependent on those types
-5. There are also some test cases which have been added.
+5. There are also some test cases which have been added
 
 ## Run it locally
 

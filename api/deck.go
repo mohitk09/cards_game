@@ -13,8 +13,7 @@ import (
 	"github.com/mohitk09/cards_game/utils"
 )
 
-/* API handler, which is called by an instance of the DB object */
-
+/* API handler */
 type DeckHandler struct {
 	repository *database.DeckRepository
 }
