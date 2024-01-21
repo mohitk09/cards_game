@@ -19,9 +19,7 @@
 
 # Go workspace file
 go.work
-
 .vscode
-
 __debug_bin
-
 cards_game.db
+cards_game_test.db
