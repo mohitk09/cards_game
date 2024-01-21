@@ -43,5 +43,5 @@ The Project is divided into several packages, **important ones are**:-
 
 ## Future scope
 
-1. More extensive test cases, currently just covering basic test casess.
+1. More extensive test cases, currently just covering basic test cases.
 2. Creating a docker file so that it becomes easier to test and deploy.
